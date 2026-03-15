@@ -2,9 +2,10 @@ package http
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
-	"time"
 	"strconv"
+	"time"
 )
 
 type Note struct {
@@ -13,6 +14,12 @@ type Note struct {
 	Body string `json:"body"`
 	Created_at time.Time `json:"created_at"`
 }
+
+type InputNote struct {
+	Title string `json:"title"`
+	Body string `json:"body"`
+}
+
 var Notes = []Note{
 	{Id: 0, Title: "Pushkin", Body: "russian writer", Created_at: time.Now()},
 	{Id: 1, Title: "Tolstoy", Body: "russian writer", Created_at: time.Now()},
@@ -20,7 +27,7 @@ var Notes = []Note{
 }
 func GetLecturesHandler(w http.ResponseWriter, r *http.Request){
 	lectureID, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
+	if err != nil || lectureID >= len(Notes) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -32,22 +39,26 @@ func GetLecturesHandler(w http.ResponseWriter, r *http.Request){
 
 func CreateLectureHandler(w http.ResponseWriter, r *http.Request){
 	newId := len(Notes)
-	var note Note
+	var note InputNote
 	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	log.Println(note)
 	if note.Title == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	note.Id = newId
-	Notes = append(Notes, note)
+	resultNote := Note{
+		Id: newId,
+		Title: note.Title,
+		Body: note.Body,
+		Created_at: time.Now(),
+	}
+	Notes = append(Notes, resultNote)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(note)
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(resultNote)
 }
 
 func UpdateLecturesHandler(w http.ResponseWriter, r *http.Request){

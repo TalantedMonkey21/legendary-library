@@ -1,43 +1,25 @@
 package main
 
 import (
-	"time"
 	"fmt"
 )
 
-type Counter struct{
-	value int
-	name *string
-}
-type Note struct {
-	Id int `json:"id"`
-	Title string `json:"title"`
-	Body string `json:"body"`
-	Created_at time.Time `json:"created_at"`
+type Person struct {
+    Name string
+    Age  int
 }
 
-var Notes = []Note{
-	{Id: 0, Title: "Pushkin", Body: "russian writer", Created_at: time.Now()},
-	{Id: 1, Title: "Tolstoy", Body: "russian writer", Created_at: time.Now()},
-	{Id: 2, Title: "Dostoevsky", Body: "russian writer", Created_at: time.Now()},
-}
-func (c *Counter) change() {
-	fmt.Println(&c.value)
-}
 func main() {
-	s := "Jhon"
-	counter := Counter{name: &s}
-	fmt.Println(counter.value)
-	fmt.Println(counter.name)
-	fmt.Println(*counter.name)
-	s = "Max"
-	fmt.Println()
-	fmt.Println(&counter.value)
-	fmt.Println(counter.value)
-	fmt.Println(counter.name)
-	fmt.Println(*counter.name)
-	fmt.Println()
-	counter.change()
+	ext := make([]int, 2, 6)
+	ext[0] = 10
+	ext[1] = 20
 
-	fmt.Println(len(Notes))
+	src := []int{1, 2, 3}
+	dst := append(ext, src...)
+
+	ext[0] = 999
+	fmt.Println(dst[0])
+	fmt.Println(ext)
+	fmt.Println(dst)
 }
+

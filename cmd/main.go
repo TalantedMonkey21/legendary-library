@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,13 +10,13 @@ import (
 )
 
 
-var nextId = 0
 
 
 func main (){
 	cfg := config.Load()
+	db := cfg.Db.GetDsn()
+	fmt.Println(db)
 	mux := myhttp.NewRouter()
-	log.Println(nextId)
 	log.Println("Server starts on 8080")
 	http.ListenAndServe(cfg.Port, mux)
 }

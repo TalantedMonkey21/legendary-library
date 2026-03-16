@@ -33,8 +33,8 @@ func GetLecturesHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Notes[lectureID])
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(Notes[lectureID])
 }
 
 func CreateLectureHandler(w http.ResponseWriter, r *http.Request){
@@ -89,8 +89,8 @@ func UpdateLecturesHandler(w http.ResponseWriter, r *http.Request){
 
 	existingNote.Created_at = time.Now()
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(existingNote)
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(existingNote)
 }
 
 func DeleteLecturesHandler(w http.ResponseWriter, r *http.Request){
@@ -107,6 +107,6 @@ func DeleteLecturesHandler(w http.ResponseWriter, r *http.Request){
 
 func GetAllLecturesHandler(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Notes)
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(Notes)
 }

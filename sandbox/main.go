@@ -10,16 +10,16 @@ type Person struct {
 }
 
 func main() {
-	ext := make([]int, 2, 6)
-	ext[0] = 10
-	ext[1] = 20
+	ch := make (chan int)
 
-	src := []int{1, 2, 3}
-	dst := append(ext, src...)
-
-	ext[0] = 999
-	fmt.Println(dst[0])
-	fmt.Println(ext)
-	fmt.Println(dst)
+	go func(){
+		for i := 0; i < 10; i++ { // 0 1 2 3 4
+			ch <- i
+		}
+		close(ch)
+	}()
+	for n := range ch {
+		fmt.Println(n)
+	}
 }
 

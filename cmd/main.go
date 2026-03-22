@@ -14,8 +14,9 @@ import (
 
 func main (){
 	cfg := config.Load()
-	db := cfg.Db.GetDsn()
-	fmt.Println(db)
+	dbDsn := cfg.Db.GetDsn()
+	fmt.Println(dbDsn)
+	config.ConnectDb(dbDsn)
 	mux := myhttp.NewRouter()
 	log.Println("Server starts on 8080")
 	http.ListenAndServe(cfg.Port, mux)

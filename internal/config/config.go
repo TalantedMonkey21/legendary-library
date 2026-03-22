@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-
+	"time"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
+
 //databasesql
 //gorm
 type Config struct {
@@ -21,6 +23,14 @@ type DbConfig struct {
 	Dbname string
 	Port string
 	Sslmode string
+}
+
+type Note struct {
+	gorm.Model
+	Id int `json:"id"`
+	Title string `json:"title"`
+	Body string `json:"body"`
+	Created_at time.Time `json:"created_at"`
 }
 
 func Load() *Config {

@@ -13,5 +13,6 @@ import (
 // }
 
 type Note struct {
+	Id int `json:"id" gorm:"primary_key"`
 	Content string `json:"content" gorm:"not null"`
 }

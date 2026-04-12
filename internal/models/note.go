@@ -1,8 +1,6 @@
 package models
 
-import (
-	
-)
+import "gorm.io/gorm"
 
 // type Note struct {
 // 	gorm.Model
@@ -13,6 +11,7 @@ import (
 // }
 
 type Note struct {
+	gorm.Model
 	Id int `json:"id" gorm:"primary_key"`
 	Content string `json:"content" gorm:"not null"`
 }

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/TalantedMonkey21/GoLectures/internal/config"
-	"github.com/TalantedMonkey21/GoLectures/internal/db"
 	"github.com/TalantedMonkey21/GoLectures/internal/transport/handler"
 )
 
@@ -16,12 +15,12 @@ import (
 func main (){
 	cfg := config.Load()
 
-	connect, err := db.ConnectDb(cfg.Db)
+	connect, err := config.ConnectDb(cfg.Db)
 	if err != nil {
-		fmt.Println("Cannot connect tot database", err)
+		log.Println("Cannot connect tot database", err)
 		os.Exit(1)
 	}
-	fmt.Println("Migrate complete!")
+	log.Println("Migrate complete!")
 	mux := handler.NewRouter(connect)
 	http.ListenAndServe(cfg.Port, mux)
 }

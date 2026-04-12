@@ -1,10 +1,10 @@
 package config
 
 import (
-	"fmt"
-	"github.com/TalantedMonkey21/GoLectures/internal/db"
+	"log"
+	"os"
+
 	"github.com/TalantedMonkey21/GoLectures/internal/models"
-	"github.com/TalantedMonkey21/GoLectures/internal/response"
 	"github.com/joho/godotenv"
 )
 
@@ -16,10 +16,23 @@ type Config struct {
 func Load() *Config {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		log.Println("Error loading .env file")
 	}
 	return &Config{
-		Port: response.GetEnv("PORT", ":8080"),
-		Db: db.ConfigDb(),
+		Port: GetEnv("PORT", ":8080"),
+		Db: ConfigDb(),
 	}
+}
+
+func GetEnv(key, defValue string) string {
+	if key == "" {
+		log.Printf("Not found %v, use default\n", key)
+		return defValue
+	}
+	value := os.Getenv(key)
+	if value == "" {
+		log.Printf("Not found %v value, use default\n", key)
+		return defValue
+	}
+	return value
 }

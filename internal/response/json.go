@@ -1,13 +1,13 @@
 package response
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
-
+// вспомогательные функции для хэндлера
 func WriteJSONError(w http.ResponseWriter, code int, e string) {
-	WriteJSONResponse(w, code, map[string]string{"error":e})
+	WriteJSONResponse(w, code, map[string]string{"error": e})
 }
 
 func WriteJSONResponse(w http.ResponseWriter, code int, s any) {

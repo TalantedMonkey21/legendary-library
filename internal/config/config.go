@@ -1,16 +1,23 @@
 package config
 
 import (
+	"github.com/joho/godotenv"
 	"log"
 	"os"
-
-	"github.com/TalantedMonkey21/GoLectures/internal/models"
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
 	Port string
-	Db models.DbConfig
+	DB   DBConfig
+}
+
+type DBConfig struct {
+	Host     string
+	User     string
+	Password string
+	Name     string
+	Port     string
+	SSLMode  string
 }
 
 func Load() *Config {
@@ -20,7 +27,7 @@ func Load() *Config {
 	}
 	return &Config{
 		Port: GetEnv("PORT", ":8080"),
-		Db: ConfigDb(),
+		DB:   LoadDBConfig(),
 	}
 }
 

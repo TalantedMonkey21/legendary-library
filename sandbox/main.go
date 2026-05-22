@@ -1,61 +1,92 @@
 package main
 
 import (
-	"log"
-	"net/http"
-	"time"
-
-	"github.com/TalantedMonkey21/GoLectures/internal/response"
+	"fmt"
 )
 
-type Middleware func(http.Handler) (http.Handler)
-
-func loggingMiddleware(next http.Handler) (http.Handler) {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
-		start := time.Now()
-		next.ServeHTTP(w, r)
-		log.Printf("%s, %s, %s", r.Method, r.URL.Path, time.Since(start))
-	})
-}
-
-func goodbuyMiddleware(next http.Handler) (http.Handler) {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
-		next.ServeHTTP(w, r)
-		log.Printf("Goodbuy!")
-	})
-}
-
-func setMethod(next http.Handler) (http.Handler) {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
-		r.Method = "POST"
-		next.ServeHTTP(w, r)
-
-	})
-}
-
-func Chain(next http.Handler, m ...Middleware) (http.Handler) {
-	wrapped := next
-	for _, f := range m {
-		wrapped = f(wrapped)
-	}
-	return wrapped
-}
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	response.WriteJSONResponse(w, http.StatusOK, map[string]string{"message":"HelloWorld"})
-}
-
-func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
-	response.WriteJSONResponse(w, http.StatusOK, map[string]string{"message":"Goodbye"})
-}
-
 func main() {
-	mux := http.NewServeMux()
-	mux.Handle("/hello", http.HandlerFunc(helloHandler))
-	mux.Handle("/goodbuy", http.HandlerFunc(goodbyeHandler))
-	newMux := Chain(mux, setMethod, loggingMiddleware, goodbuyMiddleware)
-	http.ListenAndServe(":8080", newMux)
+	result := search([]int{4, 5, 6, 7, 0, 1, 2}, 0)
+	fmt.Println(result)
 }
+
+
+func search(nums []int, target int) int {
+    for i := range nums {
+		if nums[i] == target {
+			return i
+		}
+	}
+	return -1
+}
+
+// func main() {
+// 	nums := []int{4, 5, 6, 7, 0, 1, 2}
+// 	target := 0
+// 	for i := range nums {
+// 		if nums[i] == target {
+// 			fmt.Println(i)
+// 		}
+// 	}
+// }
+
+
+
+// import (
+// 	"log"
+// 	"net/http"
+// 	"time"
+
+// 	"github.com/TalantedMonkey21/GoLectures/internal/response"
+// )
+
+// type Middleware func(http.Handler) (http.Handler)
+
+// func loggingMiddleware(next http.Handler) (http.Handler) {
+// 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+// 		start := time.Now()
+// 		next.ServeHTTP(w, r)
+// 		log.Printf("%s, %s, %s", r.Method, r.URL.Path, time.Since(start))
+// 	})
+// }
+
+// func goodbuyMiddleware(next http.Handler) (http.Handler) {
+// 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
+// 		next.ServeHTTP(w, r)
+// 		log.Printf("Goodbuy!")
+// 	})
+// }
+
+// func setMethod(next http.Handler) (http.Handler) {
+// 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
+// 		r.Method = "POST"
+// 		next.ServeHTTP(w, r)
+
+// 	})
+// }
+
+// func Chain(next http.Handler, m ...Middleware) (http.Handler) {
+// 	wrapped := next
+// 	for _, f := range m {
+// 		wrapped = f(wrapped)
+// 	}
+// 	return wrapped
+// }
+
+// func helloHandler(w http.ResponseWriter, r *http.Request) {
+// 	response.WriteJSONResponse(w, http.StatusOK, map[string]string{"message":"HelloWorld"})
+// }
+
+// func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
+// 	response.WriteJSONResponse(w, http.StatusOK, map[string]string{"message":"Goodbye"})
+// }
+
+// func main() {
+// 	mux := http.NewServeMux()
+// 	mux.Handle("/hello", http.HandlerFunc(helloHandler))
+// 	mux.Handle("/goodbuy", http.HandlerFunc(goodbyeHandler))
+// 	newMux := Chain(mux, setMethod, loggingMiddleware, goodbuyMiddleware)
+// 	http.ListenAndServe(":8080", newMux)
+// }
 
 
 // func deletionTwo (m map[int]string) map[int]string {

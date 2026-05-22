@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 )
 
-func ContentTypeMiddleware(next http.Handler) http.Handler {
+func ContentTypeJSON(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Content-Type") != "application/json" {
+		contentType := r.Header.Get("Content-Type")
+		if !strings.HasPrefix(contentType, "application/json") {
 			http.Error(w, "invalid content type", http.StatusUnsupportedMediaType)
 			return
 		}

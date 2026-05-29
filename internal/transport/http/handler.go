@@ -5,18 +5,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"strings"
 
 	entity "github.com/TalantedMonkey21/GoLectures/internal/entity"
-	"github.com/TalantedMonkey21/GoLectures/internal/repository"
 	"github.com/TalantedMonkey21/GoLectures/internal/response"
 )
 
 type NoteUseCase interface {
 	Create(ctx context.Context, content string) (entity.Note, error)
-	GetByID(ctx context.Context, id uint) (entity.Note, error)
+	GetByID(ctx context.Context, id uint, userId uint) (entity.Note, error)
 	Update(ctx context.Context, note entity.Note) (entity.Note, error)
-	Delete(ctx context.Context, id uint) (repository.NoteModel, error)
+	Delete(ctx context.Context, id uint, userId uint) error
 }
 
 type Handler struct {
@@ -64,14 +62,21 @@ func (h *Handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetNote(w http.ResponseWriter, r *http.Request) {
-	path := strings.Split(r.URL.Path, "/")
-	pathId, err := strconv.Atoi(path[len(path)-1])
+	// path := strings.Split(r.URL.Path, "/")
+	// pathId, err := strconv.Atoi(path[len(path)-1])
+	pathId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
 		response.WriteJSONError(w, http.StatusBadRequest, "Invalid id")
 		return
 	}
 
-	note, err := h.notes.GetByID(r.Context(), uint(pathId))
+	pathUserId, err := strconv.Atoi(r.URL.Query().Get("user_id"))
+	if err != nil {
+		response.WriteJSONError(w, http.StatusBadRequest, "Invalid user_id")
+		return
+	}
+
+	note, err := h.notes.GetByID(r.Context(), uint(pathId), uint(pathUserId))
 	if err != nil {
 		response.WriteJSONError(w, http.StatusBadRequest, err.Error())
 		return
@@ -97,14 +102,19 @@ func (h *Handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
-	path := strings.Split(r.URL.Path, "/")
-	pathId, err := strconv.Atoi(path[len(path)-1])
+	pathId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
 		response.WriteJSONError(w, http.StatusBadRequest, "Invalid id")
 		return
 	}
 
-	_, err = h.notes.Delete(r.Context(), uint(pathId))
+	pathUserId, err := strconv.Atoi(r.URL.Query().Get("user_id"))
+	if err != nil {
+		response.WriteJSONError(w, http.StatusBadRequest, "Invalid user_id")
+		return
+	}
+
+	err = h.notes.Delete(r.Context(), uint(pathId), uint(pathUserId))
 	if err != nil {
 		response.WriteJSONError(w, http.StatusBadRequest, err.Error())
 		return
@@ -112,10 +122,7 @@ func (h *Handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
 
 	response.WriteJSONResponse(w, http.StatusOK, "Deleted")
 }
-// TODO:
-// GetByID
-// Update
-// Delete
+
 
 func toNoteResponse(note entity.Note) noteResponse {
 	return noteResponse{

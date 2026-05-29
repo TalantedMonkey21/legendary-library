@@ -2,19 +2,18 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"strings"
 
+	"github.com/TalantedMonkey21/GoLectures/internal/apperrors"
 	entity "github.com/TalantedMonkey21/GoLectures/internal/entity"
-	"github.com/TalantedMonkey21/GoLectures/internal/repository"
 )
 
 // требования для слоя репозитория
 type NoteRepositorier interface {
 	Create(ctx context.Context, note entity.Note) (entity.Note, error)
-	GetByID(ctx context.Context, id uint) (entity.Note, error)
+	GetByID(ctx context.Context, id uint, userId uint) (entity.Note, error)
 	Update(ctx context.Context, note entity.Note) (entity.Note, error)
-	Delete(ctx context.Context, id uint) (repository.NoteModel, error)
+	Delete(ctx context.Context, id uint, userId uint) error
 }
 
 // сам слой бизнес логики
@@ -29,7 +28,7 @@ func New(repo NoteRepositorier) *NoteUseCase {
 
 func checkLen(content string) error {
 	if len(content) < 5 {
-		return errors.New("слишком мало символов")
+		return apperrors.ErrTooShort
 	}
 	return nil
 }
@@ -45,11 +44,11 @@ func (uc *NoteUseCase) Create(ctx context.Context, content string) (entity.Note,
 	return uc.repo.Create(ctx, note)
 }
 
-func (uc *NoteUseCase) GetByID(ctx context.Context, id uint) (entity.Note, error) {
+func (uc *NoteUseCase) GetByID(ctx context.Context, id uint, userId uint) (entity.Note, error) {
 	if id == 0 {
-		return entity.Note{}, errors.New("invalid id")
+		return entity.Note{}, apperrors.ErrInvalidID
 	}
-	return uc.repo.GetByID(ctx, id)
+	return uc.repo.GetByID(ctx, id, userId)
 }
 
 func (uc *NoteUseCase) Update(ctx context.Context, note entity.Note) (entity.Note, error) {
@@ -57,19 +56,15 @@ func (uc *NoteUseCase) Update(ctx context.Context, note entity.Note) (entity.Not
 	if err := checkLen(content); err != nil {
 		return entity.Note{}, err
 	}
-
+	note.Content = content
 	return uc.repo.Update(ctx, note)
 }
 
-func (uc *NoteUseCase) Delete(ctx context.Context, id uint) (repository.NoteModel, error) {
-	var model repository.NoteModel
+func (uc *NoteUseCase) Delete(ctx context.Context, id uint, userId uint) error {
 	if id == 0 {
-		return model, errors.New("invalid id")
+		return apperrors.ErrInvalidID
 	}
-	return uc.repo.Delete(ctx, id)
+	return uc.repo.Delete(ctx, id, userId)
 }
 
-// TODO: сделать функцию
-// GetByID
-// Update
-// Delete
+

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"github.com/TalantedMonkey21/GoLectures/internal/repository"
 )
 
 func LoadDBConfig() DBConfig {
@@ -35,4 +36,8 @@ func ConnectDB(cfg DBConfig) (*gorm.DB, error) {
 	}
 
 	return db, nil
+}
+
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(&repository.UserModel{}, &repository.NoteModel{})
 }

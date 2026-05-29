@@ -2,22 +2,31 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
-func main() {
-	result := search([]int{4, 5, 6, 7, 0, 1, 2}, 0)
-	fmt.Println(result)
-}
-
-
-func search(nums []int, target int) int {
-    for i := range nums {
-		if nums[i] == target {
-			return i
-		}
+func numbers() {
+	for i := 0; i < 5; i++ {
+		time.Sleep(250 * time.Millisecond)
+		fmt.Printf("%d, ", i)
 	}
-	return -1
 }
+
+func alphabet() {
+	for i := 'a'; i <= 'e'; i++ {
+		time.Sleep(400 * time.Millisecond)
+		fmt.Printf("%c, ", i)
+	}
+}
+
+func main() {
+	go numbers()
+	go alphabet()
+	time.Sleep(3000 * time.Millisecond)
+	fmt.Println("Main end")
+}
+
+
 
 // func main() {
 // 	nums := []int{4, 5, 6, 7, 0, 1, 2}

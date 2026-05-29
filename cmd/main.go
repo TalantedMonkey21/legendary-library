@@ -47,13 +47,13 @@ func main() {
 	}
 
 	// автомиграция
-	if err := repository.AutoMigrate(db); err != nil {
+	if err := config.AutoMigrate(db); err != nil {
 		log.Println("can not migrate to database:", err)
 		os.Exit(1)
 	}
 
 	// слой хранилища
-	noteRepo := repository.New(db)
+	noteRepo := repository.NewNoteRepo(db)
 
 	// слой бизнес логики
 	noteService := usecase.New(noteRepo)

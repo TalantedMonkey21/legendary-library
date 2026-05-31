@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
+	"github.com/TalantedMonkey21/GoLectures/internal/apperrors"
 	entity "github.com/TalantedMonkey21/GoLectures/internal/entity"
 	"gorm.io/gorm"
 )
@@ -71,17 +73,17 @@ func (n *NoteRepo) GetByID(ctx context.Context, id uint, userId uint) (entity.No
 }
 
 func (n *NoteRepo) Update(ctx context.Context, note entity.Note) (entity.Note, error) {
-	model := toModelNote(note)
-	upd := n.db.WithContext(ctx).Model(&NoteModel{}).
-		Where("id = ? and user_id = ?", note.ID, note.UserID).
-		Updates(NoteModel{Content: note.Content})
-	if upd.Error != nil {
-		return entity.Note{}, upd.Error
+	var model NoteModel
+	if err := n.db.WithContext(ctx).Where("id = ? and user_id = ?", note.ID, note.UserID).First(&model, note.ID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return entity.Note{}, apperrors.ErrNoteNotFound
+		}
+		return entity.Note{}, err
 	}
-	if upd.RowsAffected == 0 {
-		return entity.Note{}, gorm.ErrRecordNotFound
+	model.Content = note.Content
+	if err := n.db.WithContext(ctx).Save(&model).Error; err != nil {
+		return entity.Note{}, err
 	}
-
 	return toEntityNote(model), nil
 }
 

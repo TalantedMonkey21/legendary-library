@@ -1,32 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"net/http"
+
+	"gorm.io/gorm"
 )
 
-func numbers() {
-	for i := 0; i < 5; i++ {
-		time.Sleep(250 * time.Millisecond)
-		fmt.Printf("%d, ", i)
-	}
+type Handler struct {
+	
 }
+//Redis Kafka Sql Algoritms Sobes
 
-func alphabet() {
-	for i := 'a'; i <= 'e'; i++ {
-		time.Sleep(400 * time.Millisecond)
-		fmt.Printf("%c, ", i)
-	}
+func (h Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
+	
 }
 
 func main() {
-	go numbers()
-	go alphabet()
-	time.Sleep(3000 * time.Millisecond)
-	fmt.Println("Main end")
+
 }
-
-
 
 // func main() {
 // 	nums := []int{4, 5, 6, 7, 0, 1, 2}

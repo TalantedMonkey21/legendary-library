@@ -71,20 +71,6 @@ func (u *UserRepo) GetByEmail(ctx context.Context, email string) (entity.User, e
 }
 
 func (u *UserRepo) Update(ctx context.Context, user entity.User) (entity.User, error) {
-	model := toModelUser(user)
-	upd := u.db.WithContext(ctx).Model(&UserModel{}).
-		Where("id = ? and email = ?", user.ID, user.Email).
-		Updates(UserModel{
-			Name: user.Name,
-			PasswordHash: user.PasswordHash,
-			Email: user.Email,
-		})
-	if upd.Error != nil {
-		return entity.User{}, upd.Error
-	}
-	if upd.RowsAffected == 0 {
-		return entity.User{}, gorm.ErrRecordNotFound
-	}
-
-	return toEntityUser(model), nil
+	var model UserModel
+	
 }

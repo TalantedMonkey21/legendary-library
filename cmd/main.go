@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/TalantedMonkey21/GoLectures/internal/config"
@@ -64,8 +67,30 @@ func main() {
 	// роутер
 	router := httptransport.NewRouter(handler)
 
-	// TODO
-	// сделай Gracefull Shutdown
-	// необязательно! если что то обсудим на уроке
-	http.ListenAndServe(cfg.Port, router)
+	server := &http.Server{
+		Addr: cfg.Port,
+		Handler: router,
+		ReadTimeout: 60 * time.Second,
+		WriteTimeout: 60 * time.Second,
+	}
+	go func() {
+		log.Printf("HTTP started on port: %s", cfg.Port)
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("HTTP server error: %v", err)
+			os.Exit(1)
+		}
+	}()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
+	<- stop
+	log.Println("Signal recived")
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Printf("Forced shutdown: %v", err)
+	} else {
+		log.Println("Server gracefully stopped")
+	}
 }

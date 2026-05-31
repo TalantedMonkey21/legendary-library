@@ -8,4 +8,5 @@ var (
 	ErrInvalidEmail  = errors.New("неправильная почта")
 	ErrWeakPassword  = errors.New("слабый пароль")
 	ErrUserNotFound  = errors.New("user not found")
-)
+	ErrNoteNotFound	 = errors.New("note not found")
+)	

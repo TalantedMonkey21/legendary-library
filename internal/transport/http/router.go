@@ -6,10 +6,7 @@ import (
 	"github.com/TalantedMonkey21/GoLectures/internal/middleware"
 )
 
-// TODO:
-// GetByID
-// Update
-// Delete
+
 func NewRouter(handler *Handler) http.Handler {
 	mux := http.NewServeMux()
 

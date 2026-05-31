@@ -47,3 +47,17 @@ func (uc *UserUseCase) Register(ctx context.Context, name, email, password strin
 	}
 	return user, nil
 }
+
+func (uc *UserUseCase) Login(ctx context.Context, email, password string) (entity.User, error) {
+	email = strings.TrimSpace(strings.ToLower(email))
+	password = strings.TrimSpace(password)
+
+	en ,err := uc.repo.GetByEmail(ctx, email)
+	if err != nil {
+		return entity.User{}, err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(en.PasswordHash), []byte(password)); err != nil {
+		return entity.User{}, err
+	}
+	
+}
